@@ -7,6 +7,7 @@ namespace QuoteAPI.Models
 {
     public class Rater
     {
+        public int Id { get; set; }
         public int Revenue { get; set; }
 
         public string State { get; set; }
