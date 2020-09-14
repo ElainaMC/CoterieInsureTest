@@ -5,107 +5,39 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using QuoteAPI.Models;
 using QuoteAPI.Models.Requests;
 using QuoteAPI.Models.Responses;
 
 namespace QuoteAPI.Controllers
 {
-    [Route("api/rater")]
     [ApiController]
-    public class RaterController : Controller
+    [Route("[controller]")]
+    public class RaterController : ControllerBase
     {
-        private IRaterService _service = null;
-        private IAuthenticationService<int> _authService = null;
+        private static readonly string[] Summaries = new[]
+        {
+            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
+        };
 
-        public RaterController(IRaterService service
-            , ILogger<RaterController> logger
-            , IAuthenticationService<int> authService): base(logger)
+        private readonly ILogger<RaterController> _logger;
+
+        public RaterController(ILogger<RaterController> logger)
         {
-            _service = service;
-            _authService = authService;
-        }
-        // GET: RaterController
-        public ActionResult Index()
-        {
-            return View();
+            _logger = logger;
         }
 
-        // GET: RaterController/Details/5
-        public ActionResult Details(int id)
+        [HttpGet]
+        public IEnumerable<Rater> Get()
         {
-            return View();
-        }
-
-        // GET: RaterController/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: RaterController/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult <ItemResponse<int>>Create(RaterAddRequest model)
-        {
-            int userId = _authService.GetCurrentUserId();
-
-            ObjectResult result;
-            try
+            var rng = new Random();
+            return Enumerable.Range(1, 5).Select(index => new Rater
             {
-                int id = _service.Add(model, currentUserId);
-                ItemResponse<int> response = new ItemResponse<int> { Item = id };
-                result = Created201(response);
-            }
-            catch (Exception ex)
-            {
-                base.Logger.LogError(ex.ToString());
-                ErrorResponse response = new ErrorResponse(ex.Message);
-                result = StatusCode(500, response);
-            }
-            return result;
-            
-        }
-
-        // GET: RaterController/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
-
-        // POST: RaterController/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: RaterController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: RaterController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+                Revenue = rng.Next(100, 900),
+                State  = 
+                Business = Summaries[rng.Next(Summaries.Length)]
+            })
+            .ToArray();
         }
     }
 }
