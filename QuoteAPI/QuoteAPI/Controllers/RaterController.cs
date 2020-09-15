@@ -15,9 +15,14 @@ namespace QuoteAPI.Controllers
     [Route("[controller]")]
     public class RaterController : ControllerBase
     {
-        private static readonly string[] Summaries = new[]
+        private static readonly string[] Businesses = new[]
         {
-            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
+            "Plumber", "Architect", "Programmer"
+        };
+
+        private static readonly string[] States = new[]
+        {
+            "CA", "OH", "TX"
         };
 
         private readonly ILogger<RaterController> _logger;
@@ -34,8 +39,8 @@ namespace QuoteAPI.Controllers
             return Enumerable.Range(1, 5).Select(index => new Rater
             {
                 Revenue = rng.Next(100, 900),
-                State  = 
-                Business = Summaries[rng.Next(Summaries.Length)]
+                State = States[rng.Next(States.Length)],
+                Business = Businesses[rng.Next(Businesses.Length)]
             })
             .ToArray();
         }
